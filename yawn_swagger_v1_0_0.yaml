@@ -1,0 +1,1460 @@
+openapi: 3.0.0
+info:
+  description: "This is the API for the YAWN service, this service will collect data from sources like: gitlab, jira, slack and others like custom crawlers and send all information as a RAW message to the message queue."
+  version: "1.0.0"
+  title: "Swagger YAWN"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+# servers:
+#   - url: http://yawn.pje.jus.br/v1
+#     description: Optional server description, e.g. Main (production) server
+
+# basePath: "/v1"
+# tags:
+# - name: "jira"
+#   description: "Endpoints to receive webhooks from jira"
+#   externalDocs:
+#     description: "Find out more"
+#     url: "https://docs.atlassian.com/software/docs/api/REST/8.7.1"
+# - name: "gitlab"
+#   description: "Endpoints to receive webhooks from gitlab"
+#   externalDocs:
+#     description: "Find out more"
+#     url: "https://docs.gitlab.com/ee/api/projects.html"
+# - name: "slack"
+#   description: "Endpoints to receive webhooks from gitlab"
+#   externalDocs:
+#     description: "Find out more"
+#     url: "https://api.slack.com/search?query=webhook"
+# schemes:
+# - "https"
+# - "http"
+paths:
+  /jira/issue:
+    post:
+      tags:
+      - "jira"
+      summary: "New issue or issue updated"
+      description: ""
+      operationId: "addUpdateIssue"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JiraEvent"
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        405:
+          description: "Invalid input"
+      security:
+      - yawn_auth:
+        - "write:jiraIssue"
+  /gitlab/merge-request:
+    post:
+      tags:
+      - "gitlab"
+      summary: "New merge request"
+      description: ""
+      operationId: "addCommit"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GitlabEvent"
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        405:
+          description: "Invalid input"
+      security:
+      - yawn_auth:
+        - "write:gitlabCode"
+
+  /slack/channel/message:
+    post:
+      tags:
+      - "slack"
+      summary: "New message to a slack channel"
+      description: ""
+      operationId: "addMessage"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SlackChannelMessage"
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        405:
+          description: "Invalid input"
+      security:
+      - yawn_auth:
+        - "write:slackCode"
+
+  # /pet/findByStatus:
+  #   get:
+  #     tags:
+  #     - "pet"
+  #     summary: "Finds Pets by status"
+  #     description: "Multiple status values can be provided with comma separated strings"
+  #     operationId: "findPetsByStatus"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - name: "status"
+  #       in: "query"
+  #       description: "Status values that need to be considered for filter"
+  #       required: true
+  #       type: "array"
+  #       items:
+  #         type: "string"
+  #         enum:
+  #         - "available"
+  #         - "pending"
+  #         - "sold"
+  #         default: "available"
+  #       collectionFormat: "multi"
+  #     responses:
+  #       200:
+  #         description: "successful operation"
+  #         schema:
+  #           type: "array"
+  #           items:
+  #             $ref: "#/components/schemas/Pet"
+  #       400:
+  #         description: "Invalid status value"
+  #     security:
+  #     - petstore_auth:
+  #       - "write:pets"
+  #       - "read:pets"
+  # /pet/findByTags:
+  #   get:
+  #     tags:
+  #     - "pet"
+  #     summary: "Finds Pets by tags"
+  #     description: "Muliple tags can be provided with comma separated strings. Use         tag1, tag2, tag3 for testing."
+  #     operationId: "findPetsByTags"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - name: "tags"
+  #       in: "query"
+  #       description: "Tags to filter by"
+  #       required: true
+  #       type: "array"
+  #       items:
+  #         type: "string"
+  #       collectionFormat: "multi"
+  #     responses:
+  #       200:
+  #         description: "successful operation"
+  #         schema:
+  #           type: "array"
+  #           items:
+  #             $ref: "#/components/schemas/Pet"
+  #       400:
+  #         description: "Invalid tag value"
+  #     security:
+  #     - petstore_auth:
+  #       - "write:pets"
+  #       - "read:pets"
+  #     deprecated: true
+  # /pet/{petId}:
+  #   get:
+  #     tags:
+  #     - "pet"
+  #     summary: "Find pet by ID"
+  #     description: "Returns a single pet"
+  #     operationId: "getPetById"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - name: "petId"
+  #       in: "path"
+  #       description: "ID of pet to return"
+  #       required: true
+  #       type: "integer"
+  #       format: "int64"
+  #     responses:
+  #       200:
+  #         description: "successful operation"
+  #         schema:
+  #           $ref: "#/components/schemas/Pet"
+  #       400:
+  #         description: "Invalid ID supplied"
+  #       404:
+  #         description: "Pet not found"
+  #     security:
+  #     - api_key: []
+  #   post:
+  #     tags:
+  #     - "pet"
+  #     summary: "Updates a pet in the store with form data"
+  #     description: ""
+  #     operationId: "updatePetWithForm"
+  #     consumes:
+  #     - "application/x-www-form-urlencoded"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - name: "petId"
+  #       in: "path"
+  #       description: "ID of pet that needs to be updated"
+  #       required: true
+  #       type: "integer"
+  #       format: "int64"
+  #     - name: "name"
+  #       in: "formData"
+  #       description: "Updated name of the pet"
+  #       required: false
+  #       type: "string"
+  #     - name: "status"
+  #       in: "formData"
+  #       description: "Updated status of the pet"
+  #       required: false
+  #       type: "string"
+  #     responses:
+  #       405:
+  #         description: "Invalid input"
+  #     security:
+  #     - petstore_auth:
+  #       - "write:pets"
+  #       - "read:pets"
+  #   delete:
+  #     tags:
+  #     - "pet"
+  #     summary: "Deletes a pet"
+  #     description: ""
+  #     operationId: "deletePet"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - name: "api_key"
+  #       in: "header"
+  #       required: false
+  #       type: "string"
+  #     - name: "petId"
+  #       in: "path"
+  #       description: "Pet id to delete"
+  #       required: true
+  #       type: "integer"
+  #       format: "int64"
+  #     responses:
+  #       400:
+  #         description: "Invalid ID supplied"
+  #       404:
+  #         description: "Pet not found"
+  #     security:
+  #     - petstore_auth:
+  #       - "write:pets"
+  #       - "read:pets"
+  # /pet/{petId}/uploadImage:
+  #   post:
+  #     tags:
+  #     - "pet"
+  #     summary: "uploads an image"
+  #     description: ""
+  #     operationId: "uploadFile"
+  #     consumes:
+  #     - "multipart/form-data"
+  #     produces:
+  #     - "application/json"
+  #     parameters:
+  #     - name: "petId"
+  #       in: "path"
+  #       description: "ID of pet to update"
+  #       required: true
+  #       type: "integer"
+  #       format: "int64"
+  #     - name: "additionalMetadata"
+  #       in: "formData"
+  #       description: "Additional data to pass to server"
+  #       required: false
+  #       type: "string"
+  #     - name: "file"
+  #       in: "formData"
+  #       description: "file to upload"
+  #       required: false
+  #       type: "file"
+  #     responses:
+  #       200:
+  #         description: "successful operation"
+  #         schema:
+  #           $ref: "#/components/schemas/ApiResponse"
+  #     security:
+  #     - petstore_auth:
+  #       - "write:pets"
+  #       - "read:pets"
+  # /store/inventory:
+  #   get:
+  #     tags:
+  #     - "store"
+  #     summary: "Returns pet inventories by status"
+  #     description: "Returns a map of status codes to quantities"
+  #     operationId: "getInventory"
+  #     produces:
+  #     - "application/json"
+  #     parameters: []
+  #     responses:
+  #       200:
+  #         description: "successful operation"
+  #         schema:
+  #           type: "object"
+  #           additionalProperties:
+  #             type: "integer"
+  #             format: "int32"
+  #     security:
+  #     - api_key: []
+  # /store/order:
+  #   post:
+  #     tags:
+  #     - "store"
+  #     summary: "Place an order for a pet"
+  #     description: ""
+  #     operationId: "placeOrder"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - in: "body"
+  #       name: "body"
+  #       description: "order placed for purchasing the pet"
+  #       required: true
+  #       schema:
+  #         $ref: "#/components/schemas/Order"
+  #     responses:
+  #       200:
+  #         description: "successful operation"
+  #         schema:
+  #           $ref: "#/components/schemas/Order"
+  #       400:
+  #         description: "Invalid Order"
+  # /store/order/{orderId}:
+  #   get:
+  #     tags:
+  #     - "store"
+  #     summary: "Find purchase order by ID"
+  #     description: "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions"
+  #     operationId: "getOrderById"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - name: "orderId"
+  #       in: "path"
+  #       description: "ID of pet that needs to be fetched"
+  #       required: true
+  #       type: "integer"
+  #       maximum: 10.0
+  #       minimum: 1.0
+  #       format: "int64"
+  #     responses:
+  #       200:
+  #         description: "successful operation"
+  #         schema:
+  #           $ref: "#/components/schemas/Order"
+  #       400:
+  #         description: "Invalid ID supplied"
+  #       404:
+  #         description: "Order not found"
+  #   delete:
+  #     tags:
+  #     - "store"
+  #     summary: "Delete purchase order by ID"
+  #     description: "For valid response try integer IDs with positive integer value.         Negative or non-integer values will generate API errors"
+  #     operationId: "deleteOrder"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - name: "orderId"
+  #       in: "path"
+  #       description: "ID of the order that needs to be deleted"
+  #       required: true
+  #       type: "integer"
+  #       minimum: 1.0
+  #       format: "int64"
+  #     responses:
+  #       400:
+  #         description: "Invalid ID supplied"
+  #       404:
+  #         description: "Order not found"
+  # /user:
+  #   post:
+  #     tags:
+  #     - "user"
+  #     summary: "Create user"
+  #     description: "This can only be done by the logged in user."
+  #     operationId: "createUser"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - in: "body"
+  #       name: "body"
+  #       description: "Created user object"
+  #       required: true
+  #       schema:
+  #         $ref: "#/components/schemas/User"
+  #     responses:
+  #       default:
+  #         description: "successful operation"
+  # /user/createWithArray:
+  #   post:
+  #     tags:
+  #     - "user"
+  #     summary: "Creates list of users with given input array"
+  #     description: ""
+  #     operationId: "createUsersWithArrayInput"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - in: "body"
+  #       name: "body"
+  #       description: "List of user object"
+  #       required: true
+  #       schema:
+  #         type: "array"
+  #         items:
+  #           $ref: "#/components/schemas/User"
+  #     responses:
+  #       default:
+  #         description: "successful operation"
+  # /user/createWithList:
+  #   post:
+  #     tags:
+  #     - "user"
+  #     summary: "Creates list of users with given input array"
+  #     description: ""
+  #     operationId: "createUsersWithListInput"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - in: "body"
+  #       name: "body"
+  #       description: "List of user object"
+  #       required: true
+  #       schema:
+  #         type: "array"
+  #         items:
+  #           $ref: "#/components/schemas/User"
+  #     responses:
+  #       default:
+  #         description: "successful operation"
+  # /user/login:
+  #   get:
+  #     tags:
+  #     - "user"
+  #     summary: "Logs user into the system"
+  #     description: ""
+  #     operationId: "loginUser"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - name: "username"
+  #       in: "query"
+  #       description: "The user name for login"
+  #       required: true
+  #       type: "string"
+  #     - name: "password"
+  #       in: "query"
+  #       description: "The password for login in clear text"
+  #       required: true
+  #       type: "string"
+  #     responses:
+  #       200:
+  #         description: "successful operation"
+  #         schema:
+  #           type: "string"
+  #         headers:
+  #           X-Rate-Limit:
+  #             type: "integer"
+  #             format: "int32"
+  #             description: "calls per hour allowed by the user"
+  #           X-Expires-After:
+  #             type: "string"
+  #             format: "date-time"
+  #             description: "date in UTC when token expires"
+  #       400:
+  #         description: "Invalid username/password supplied"
+  # /user/logout:
+  #   get:
+  #     tags:
+  #     - "user"
+  #     summary: "Logs out current logged in user session"
+  #     description: ""
+  #     operationId: "logoutUser"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters: []
+  #     responses:
+  #       default:
+  #         description: "successful operation"
+  # /user/{username}:
+  #   get:
+  #     tags:
+  #     - "user"
+  #     summary: "Get user by user name"
+  #     description: ""
+  #     operationId: "getUserByName"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - name: "username"
+  #       in: "path"
+  #       description: "The name that needs to be fetched. Use user1 for testing. "
+  #       required: true
+  #       type: "string"
+  #     responses:
+  #       200:
+  #         description: "successful operation"
+  #         schema:
+  #           $ref: "#/components/schemas/User"
+  #       400:
+  #         description: "Invalid username supplied"
+  #       404:
+  #         description: "User not found"
+  #   put:
+  #     tags:
+  #     - "user"
+  #     summary: "Updated user"
+  #     description: "This can only be done by the logged in user."
+  #     operationId: "updateUser"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - name: "username"
+  #       in: "path"
+  #       description: "name that need to be updated"
+  #       required: true
+  #       type: "string"
+  #     - in: "body"
+  #       name: "body"
+  #       description: "Updated user object"
+  #       required: true
+  #       schema:
+  #         $ref: "#/components/schemas/User"
+  #     responses:
+  #       400:
+  #         description: "Invalid user supplied"
+  #       404:
+  #         description: "User not found"
+  #   delete:
+  #     tags:
+  #     - "user"
+  #     summary: "Delete user"
+  #     description: "This can only be done by the logged in user."
+  #     operationId: "deleteUser"
+  #     produces:
+  #     - "application/xml"
+  #     - "application/json"
+  #     parameters:
+  #     - name: "username"
+  #       in: "path"
+  #       description: "The name that needs to be deleted"
+  #       required: true
+  #       type: "string"
+  #     responses:
+  #       400:
+  #         description: "Invalid username supplied"
+  #       404:
+  #         description: "User not found"
+
+security: # global security
+  - yawn_api_key: []
+  
+components:
+  securitySchemes:
+    yawn_auth:
+      type: "oauth2"
+      flows:
+        implicit:
+          authorizationUrl: "http://yawn.pje.jus.br/oauth/dialog"
+          scopes:
+            write:jiraIssue: "modify jiraIssues in your jira's account"
+            write:gitlabCode: "modify code in your gitlab's account"
+    yawn_api_key:
+      type: "apiKey"
+      name: "X-API-KEY"
+      in: "header"
+
+  schemas:
+    JiraUser:
+      type: "object"
+      required:
+        - "name"
+        - "key"
+  
+      properties:
+        self:
+          type: "string"
+        name:
+          type: "string"
+        key:
+          type: "string"
+        emailAddress:
+          type: "string"
+          format: "email"
+        displayName:
+          type: "string"
+        active:
+          type: boolean
+        timeZone:
+          type: "string"
+    
+    JiraVersion:
+      type: "object"
+      required:
+        - "id"
+        - "name"
+        - "released"
+      properties:
+        id:
+          type: "number"
+        name:
+          type: "string"
+        archieved:
+          type: "boolean"
+        released:
+          type: "boolean"
+        releaseDate:
+          type: "string"
+          format: "date"
+        self:
+          type: "string"
+          
+    JiraStatus:
+      type: "object"
+      required:
+        - "id"
+        - "name"
+  
+      properties:
+        id:
+          type: "number"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        iconUrl:
+          type: "string"
+        self:
+          type: "string"
+        statusCategory:
+          type: "object"
+          required:
+            - "id"
+            - "name"
+          properties:
+            id:
+              type: "number"
+            name:
+              type: "string"
+            key:
+              type: "string"
+            colorName:
+              type: "string"
+            self:
+              type: "string"
+  
+    JiraIssueType:
+      type: "object"
+      required:
+        - "id"
+        - "name"
+      properties:
+        id:
+          type: "number"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        iconUrl:
+          type: "string"
+        subtask:
+          type: "boolean"
+        avatarId:
+          type: "number"
+        self:
+          type: "string"
+          
+    JiraProject:
+      type: "object"
+      required:
+        - "id"
+        - "key"
+      properties:
+        id:
+          type: "number"
+        key:
+          type: "string"
+        name:
+          type: "string"
+        projectTypeKey:
+          type: "string"
+        avatarurls:
+          type: "object"
+          properties:
+            "48x48":
+              type: "string"
+            "32x32":
+              type: "string"
+            "24x24":
+              type: "string"
+            "16x16":
+              type: "string"
+        self:
+          type: "string"
+        projectCategory:
+          type: "object"
+          properties:
+            id:
+              type: "number"
+            name:
+              type: "string"
+            description:
+              type: "string"
+            self:
+              type: "string"
+  
+    JiraIssueOptionField:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        value:
+          type: "string"
+        self:
+          type: "string"
+          
+    JiraIssueOptionFieldWithChild:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        value:
+          type: "string"
+        self:
+          type: "string"
+        child:
+          $ref: "#/components/schemas/JiraIssueOptionField"
+          
+    JiraIssueComment:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        body:
+          type: "string"
+        author:
+          $ref: "#/components/schemas/JiraUser"
+        created:
+          type: "string"
+          format: "date-time"
+        updateAuthor:
+          $ref: "#/components/schemas/JiraUser"
+        updated:
+          type: "string"
+          format: "date-time"
+        self:
+          type: "string"
+  
+    JiraIssue:
+      type: "object"
+      required:
+      - "id"
+      - "key"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        self:
+          type: "string"
+        key:
+          type: "string"
+        fields:
+          type: "object"
+          required: 
+            - "project"
+            - "issueType"
+            - "reporter"
+            - "summary"
+          properties:
+            # cabecalho da issue
+            project:
+              $ref: "#/components/schemas/JiraProject"
+            
+            issueType:
+              $ref: "#/components/schemas/JiraIssueType"
+            environment:
+              description: "Ambiente"
+              type: "string"
+            customfield_11205:
+              description: "Funcionalidade"
+              $ref: "#/components/schemas/JiraIssueOptionFieldWithChild"
+            customfield_11302:
+              description: "Perfil"
+              type: "array"
+              items:
+                type: "string"
+            
+            creator:
+              $ref: "#/components/schemas/JiraUser"
+            reporter:
+              $ref: "#/components/schemas/JiraUser"
+            created:
+              description: "Criado em"
+              type: "string"
+              format: "date-time"
+            summary:
+              description: "Resumo"
+              type: "string"
+            description:
+              type: "string"
+            attachment:
+              description: "Anexos"
+              type: "array"
+              items:
+                type: "object"
+  
+            versions:
+              description: "Versões Afetadas"
+              type: "array"
+              items:
+                $ref: "#/components/schemas/JiraVersion"
+            labels:
+              type: "array"
+              items:
+                type: "string"
+            customfield_11200:
+              description: "sistema"
+              type: "string" # "sistema"
+            customfield_13004:
+              description: "Serviço relacionado"
+              $ref: "#/components/schemas/JiraIssueOptionField"
+  
+            customfield_13601:
+              description: "Parent link"
+              type: "string"
+            subtasks:
+              type: "array"
+              items:
+                $ref: "#/components/schemas/JiraIssue"
+  
+            # Triagem
+            customfield_13700:
+              description: "Informações da demanda pendentes"
+              type: "array"
+              items:
+                type: "string"
+  
+            # Classificacao/priorizacao
+            priority:
+              type: "object"
+              properties:
+                id:
+                  type: "number"
+                name:
+                  type: "string"
+                iconUrl:
+                  type: "string"
+                self:
+                  type: "string"
+            customfield_10204:
+              description: "Business value"
+              type: "integer"
+            customfield_10201:
+              description: "Epic/Theme"
+              type: "array"
+              items:
+                type: "string"
+            customfield_11503:
+              description: "Potencial diminuicao novas issues"
+              $ref: "#/components/schemas/JiraIssueOptionField"
+            customfield_11502:
+              description: "Complexidade"
+              $ref: "#/components/schemas/JiraIssueOptionField"
+  
+            issuelinks:
+              description: "Pendências Linkadas"
+              type: "array"
+              items:
+                type: "object"
+            customfield_11700: # "name": "Tribunal requisitante",
+              description: "Tribunal requisitante"
+              type: "array"
+              items:
+                type: "string"
+            votes:
+              type: "object"
+              properties:
+                votes:
+                  type: "integer"
+                hasVoted:
+                  type: "boolean"
+                self:
+                  type: "string"
+            watches:
+              description: "Acompanhantes"
+              type: "object"
+              properties:
+                watchCount:
+                  type: "integer"
+                isWatching:
+                  type: "boolean"
+                self:
+                  type: "string"
+            
+            # Fluxo atual
+            assignee:
+              description: "Responsavel"
+              $ref: "#/components/schemas/JiraUser"
+            status:
+              $ref: "#/components/schemas/JiraStatus"
+            updated:
+              description: "Atualizado em"
+              type: "string"
+              format: "date-time"
+            
+            # desenvolvimento
+            customfield_11900:
+              description: "FabricaDesenvolvimentoPJe"
+              $ref: "#/components/schemas/JiraIssueOptionField"
+            customfield_11401:
+              description: "Sprint de desenvolvimento"
+              $ref: "#/components/schemas/JiraIssueOptionField"
+            customfield_12303:
+              description: "Responsavel pela codificacao"
+              $ref: "#/components/schemas/JiraUser"
+            customfield_13500:
+              description: "Desenvolvimento"
+              type: "object" # "name": "Desenvolvimento"
+            customfield_13605: # "name": "gitBranch",
+              description: "gitBranch"
+              type: "object"
+            customfield_13606:
+              description: "gitCommitsReferenced"
+              type: "object"
+            timeestimate: # "name": "Tempo Restante",
+              description: "Tempo Restante"
+              type: "number"
+            timespent: # "name": "Tempo Gasto",
+              description: "Tempo Gasto"
+              type: "number"
+            duedate:
+              description: "Data para Ficar Pronto"
+              type: "string"
+              format: "date-time"
+            
+            # homologacao negocial
+            customfield_11901:
+              description: "FabricaHomologacaoPJe"
+              $ref: "#/components/schemas/JiraIssueOptionField"
+            customfield_12000: # "name": "Responsavel pelo Teste",
+              description: "Responsavel pelo Teste"
+              $ref: "#/components/schemas/JiraUser"
+            
+            # homologacao tecnica
+            customfield_13834:
+              description: "Aprovações necessárias"
+              type: "integer"
+            customfield_13835:
+              description: "Aprovações realizadas"
+              type: "integer"
+            customfield_13836:
+              description: "Aprovado por"
+              type: "string"
+            
+            # finalizacao
+            resolution:
+              type: "object"
+              properties:
+                id:
+                  type: "integer"
+                self:
+                  type: "string"
+                description:
+                  type: "string"
+                name:
+                  type: "string"
+            resolutiondate:
+              type: "string"
+              format: "date"
+            
+            # publish
+            customfield_13837:
+              description: "Notas de release"
+              type: "string"
+            fixVersions:
+              type: "array"
+              items:
+                $ref: "#/components/schemas/JiraVersion"
+                
+            # issue de lancamento de versao
+            customfield_13909:
+              description: "Destaques notas de release"
+              type: "string"
+                
+            # comentarios
+            comment:
+              type: "object"
+              properties:
+                comments:
+                  type: "array"
+                  items:
+                    $ref: "#/components/schemas/JiraIssueComment"
+                maxResults:
+                  type: "integer"
+                total:
+                  type: "integer"
+                startAt:
+                  type: "integer"
+           
+    JiraEvent:
+      type: "object"
+      required:
+      - "timestamp"
+      - "webhookEvent"
+      - "issue_event_type_name"
+      - "user"
+      - "issue"
+      properties:
+        timestamp:
+          type: "string"
+          format: "uuid"
+        webhookEvent:
+          type: "string"
+          enum:
+            - "jira:issue_created"
+            - "jira:issue_updated"
+        issue_event_type_name:
+          type: "string"
+          enum:
+            - "issue_created"
+            - "issue_generic"
+        user:
+          $ref: "#/components/schemas/JiraUser"
+        issue:
+          $ref: "#/components/schemas/JiraIssue"
+        changelog:
+          type: "object"
+          properties:
+            id:
+              type: "integer"
+              format: "int64"
+            items:
+              type: "array"
+              items:
+                type: "object"
+                properties:
+                  field:
+                    type: "string"
+                  fieldtype:
+                    type: "string"
+                  from:
+                    type: "number"
+                  fromString:
+                    type: "string"
+                  to:
+                    type: "number"
+                  toString:
+                    type: "string"
+
+########################### GITLAB
+    GitlabUser:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        username:
+          type: "string"
+        avatar_url:
+          type: "string"
+
+    GitlabProject:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        web_url:
+          type: "string"
+        avatar_url:
+          type: "string"
+        git_ssh_url:
+          type: "string"
+        git_http_url:
+          type: "string"
+        namespace:
+          type: "string"
+        visibility_level:
+          type: "integer"
+        path_with_namespace:
+          type: "string"
+        default_branch:
+          type: "string"
+          default: "master"
+        homepage:
+          type: "string"
+        url:
+          type: "string"
+        ssh_url:
+          type: "string"
+        http_url:
+          type: "string"
+          
+    GitlabCommit:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        message:
+          type: "string"
+        timestamp:
+          type: "string"
+          format: "date-time"
+        url:
+          type: "string"
+        author:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+            email:
+              type: "string"
+              format: "email"
+
+    GitlabMergeRequestAttributes:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        iid:
+          description: "Merge request Id"
+          type: "number"
+        assignee_id:
+          type: "number"
+        author_id:
+          type: "number"
+        created_at:
+          type: "string"
+          format: "date-time"
+        description:
+          type: "string"
+        head_pipeline_id:
+          type: "number"
+        last_edited_at:
+          type: "string"
+          format: "date-time"
+        last_edited_by_id:
+          type: "number"
+        merge_commit_sha:
+          type: "string"
+        merge_error:
+          type: "string"
+        merge_params:
+          type: "object"
+          properties:
+            force_remove_source_branch:
+              type: "integer"
+        merge_status:
+          type: "string"
+          enum:
+          - "can_be_merged"
+          - "unchecked"
+          - "can(not)_be_merged"
+          - "checking"
+        merge_user_id:
+          type: "number"
+        merge_when_pipeline_succeeds:
+          type: "boolean"
+        milestone_id:
+          type: "number"
+        source_branch:
+          type: "string"
+        source_project_id:
+          type: "number"
+        state:
+          type: "string"
+          enum:
+          - "merged"
+          - "opened"
+          - "closed"
+          - "locked"
+        target_branch:
+          type: "string"
+          default: "master"
+        target_project_id:
+          type: "number"
+        time_estimate:
+          type: "number"
+        title:
+          type: "string"
+        updated_at:
+          type: "string"
+          format: "date-time"
+        updated_by_id:
+          type: "number"
+        url:
+          type: "string"
+        source:
+          $ref: "#/components/schemas/GitlabProject"
+        target:
+          $ref: "#/components/schemas/GitlabProject"
+        last_commit:
+          $ref: "#/components/schemas/GitlabCommit"
+        work_in_progress:
+          type: "boolean"
+        total_time_spent:
+          type: "integer"
+        human_total_time_spent:
+          type: "integer"
+        human_time_estimate:
+          type: "integer"
+        assignee_ids:
+          type: "array"
+          items:
+            type: "number"
+          
+    GitlabEvent:
+      type: "object"
+      required: 
+      - "object_kind"
+      - "event_type"
+      - "user"
+      - "project"
+      properties:
+        object_kind:
+          type: "string"
+          enum:
+          - "merge_request"
+          - "comment"
+          - "tag_pushed"
+          - "push"
+          - "job_changes"
+          - "pipeline_changes"
+        event_type:
+          type: "string"
+          enum:
+          - "merge_request"
+          - "comment"
+          - "tag_pushed"
+          - "push"
+          - "job_changes"
+          - "pipeline_changes"
+        user:
+          $ref: "#/components/schemas/GitlabUser"
+        project:
+          $ref: "#/components/schemas/GitlabProject"
+        object_attributes:
+          $ref: "#/components/schemas/GitlabMergeRequestAttributes"
+        labels:
+          type: "array"
+          items:
+            type: "string"
+        changes:
+          type: "object"
+          properties:
+            total_time_spent:
+              type: "object"
+              properties:
+                previous:
+                  type: "integer"
+                current:
+                  type: "integer"
+        repository:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+            url:
+              type: "string"
+            description:
+              type: "string"
+            homepage:
+              type: "string"
+
+    SlackChannelMessage:
+      type: "object"
+      properties:
+        type:
+          type: "string"
+          enum:
+          - "message"
+        subtype:
+          type: "string"
+          example: "channel_join"
+        text:
+          type: "string"
+          example: "<@U023BECGF|bobby> has joined the channel"
+        ts:
+          type: "string"
+          example: "1403051575.000407"
+        user:
+          type: "string"
+          example: "U023BECGF"
+        edited:
+          type: "object"
+          properties:
+            user:
+              type: "string"
+              example: "U023BECGF"
+            ts:
+              type: "string"
+              example: "1403051575.000407"
+
+    Order:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        petId:
+          type: "integer"
+          format: "int64"
+        quantity:
+          type: "integer"
+          format: "int32"
+        shipDate:
+          type: "string"
+          format: "date-time"
+        status:
+          type: "string"
+          description: "Order Status"
+          enum:
+          - "placed"
+          - "approved"
+          - "delivered"
+        complete:
+          type: "boolean"
+          default: false
+      xml:
+        name: "Order"
+    Category:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+      xml:
+        name: "Category"
+    User:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        username:
+          type: "string"
+        firstName:
+          type: "string"
+        lastName:
+          type: "string"
+        email:
+          type: "string"
+        password:
+          type: "string"
+        phone:
+          type: "string"
+        userStatus:
+          type: "integer"
+          format: "int32"
+          description: "User Status"
+      xml:
+        name: "User"
+    Tag:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+      xml:
+        name: "Tag"
+    Pet:
+      type: "object"
+      required:
+      - "name"
+      - "photoUrls"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        category:
+          $ref: "#/components/schemas/Category"
+        name:
+          type: "string"
+          example: "doggie"
+        photoUrls:
+          type: "array"
+          xml:
+            name: "photoUrl"
+            wrapped: true
+          items:
+            type: "string"
+        tags:
+          type: "array"
+          xml:
+            name: "tag"
+            wrapped: true
+          items:
+            $ref: "#/components/schemas/Tag"
+        status:
+          type: "string"
+          description: "pet status in the store"
+          enum:
+          - "available"
+          - "pending"
+          - "sold"
+      xml:
+        name: "Pet"
+    ApiResponse:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          format: "int32"
+        type:
+          type: "string"
+        message:
+          type: "string"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
