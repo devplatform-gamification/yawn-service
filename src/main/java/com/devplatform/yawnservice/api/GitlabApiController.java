@@ -15,7 +15,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.devplatform.model.ModelApiResponse;
-import com.devplatform.model.event.gitlab.GitlabEvent;
+import com.devplatform.model.event.gitlab.GitlabMergeRequest;
+import com.devplatform.model.event.gitlab.GitlabNote;
+import com.devplatform.model.event.gitlab.GitlabPush;
 import com.devplatform.yawnservice.amqp.AmqpProducer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -42,13 +44,14 @@ public class GitlabApiController implements GitlabApi {
         this.request = request;
     }
 
-    public ResponseEntity<ModelApiResponse> mergeRequest(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabEvent body) {
+    @Override
+    public ResponseEntity<ModelApiResponse> mergeRequest(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabMergeRequest body) {
     	amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventType().name());
 
     	String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json"))) {
             try {
-                return new ResponseEntity<ModelApiResponse>(objectMapper.readValue("{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}", ModelApiResponse.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<ModelApiResponse>(objectMapper.readValue("{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}", ModelApiResponse.class), HttpStatus.ACCEPTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -58,4 +61,37 @@ public class GitlabApiController implements GitlabApi {
         return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @Override
+    public ResponseEntity<ModelApiResponse> push(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabPush body) {
+    	amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventType().name());
+
+    	String accept = request.getHeader("Accept");
+        if (accept != null && (accept.contains("application/json"))) {
+            try {
+                return new ResponseEntity<ModelApiResponse>(objectMapper.readValue("{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}", ModelApiResponse.class), HttpStatus.ACCEPTED);
+            } catch (IOException e) {
+                log.error("Couldn't serialize response for content type application/json", e);
+                return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ResponseEntity<ModelApiResponse> comment(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabNote body) {
+    	amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventType().name());
+
+    	String accept = request.getHeader("Accept");
+        if (accept != null && (accept.contains("application/json"))) {
+            try {
+                return new ResponseEntity<ModelApiResponse>(objectMapper.readValue("{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}", ModelApiResponse.class), HttpStatus.ACCEPTED);
+            } catch (IOException e) {
+                log.error("Couldn't serialize response for content type application/json", e);
+                return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
+    }
 }

@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.devplatform.model.ModelApiResponse;
-import com.devplatform.model.event.gitlab.GitlabEvent;
+import com.devplatform.model.event.gitlab.GitlabMergeRequest;
+import com.devplatform.model.event.gitlab.GitlabNote;
+import com.devplatform.model.event.gitlab.GitlabPush;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,19 +23,41 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
+
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-18T19:01:01.992Z[GMT]")
 @Api(value = "gitlab", description = "the gitlab API")
 public interface GitlabApi {
 
-    @ApiOperation(value = "New merge request", nickname = "mergeRequest", notes = "", response = ModelApiResponse.class, authorizations = {
-        @Authorization(value = "yawn_api_key")    }, tags={ "gitlab", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
-        @ApiResponse(code = 405, message = "Invalid input") })
-    @RequestMapping(value = "/gitlab/merge-request",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
-        method = RequestMethod.POST)
-    ResponseEntity<ModelApiResponse> mergeRequest(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabEvent body);
+	@ApiOperation(value = "New/Changed merge request", nickname = "mergeRequest", notes = "", response = ModelApiResponse.class, authorizations = {
+			@Authorization(value = "yawn_api_key") }, tags = { "gitlab", })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/gitlab/merge-request", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	ResponseEntity<ModelApiResponse> mergeRequest(
+			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabMergeRequest body);
+
+
+	@ApiOperation(value = "New branch push", nickname = "push", notes = "", response = ModelApiResponse.class, authorizations = {
+			@Authorization(value = "yawn_api_key") }, tags = { "gitlab", })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/gitlab/push", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	ResponseEntity<ModelApiResponse> push(
+			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabPush body);
+
+	
+	@ApiOperation(value = "New/changed comment", nickname = "note", notes = "", response = ModelApiResponse.class, authorizations = {
+			@Authorization(value = "yawn_api_key") }, tags = { "gitlab", })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/gitlab/comment", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	ResponseEntity<ModelApiResponse> comment(
+			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabNote body);
 
 }

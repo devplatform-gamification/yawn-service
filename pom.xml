@@ -18,7 +18,7 @@
 		<spring-cloud.version>Hoxton.SR3</spring-cloud.version>
 		<java.version>1.8</java.version>
         <springfox-version>2.9.2</springfox-version>
-        <devplatform.commons.version>0.0.2-SNAPSHOT</devplatform.commons.version>
+        <devplatform-commons.version>0.1.0-SNAPSHOT</devplatform-commons.version>
 	</properties>
 
 	<dependencies>
@@ -70,7 +70,7 @@
 	<dependency>
   		<groupId>com.dev-platform</groupId>
   		<artifactId>devplatform-commons</artifactId>
-  		<version>${devplatform.commons.version}</version>
+  		<version>${devplatform-commons.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework.boot</groupId>

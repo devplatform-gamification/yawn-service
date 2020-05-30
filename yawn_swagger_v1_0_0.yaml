@@ -70,7 +70,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GitlabEvent"
+              $ref: "#/components/schemas/GitlabMergeRequest"
       responses:
         200:
           description: "successful operation"
@@ -1250,7 +1250,7 @@ components:
           items:
             type: "number"
           
-    GitlabEvent:
+    GitlabMergeRequest:
       type: "object"
       required: 
       - "object_kind"
