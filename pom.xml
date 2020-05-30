@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.devplatform</groupId>
 	<artifactId>yawn-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>yawn-service</name>
 	<description>This service will collect data from sources like: gitlab, jira, slack and others like custom crawlers and send all information as a RAW message to the message queue</description>
 
