@@ -70,7 +70,7 @@
 	<dependency>
   		<groupId>com.dev-platform</groupId>
   		<artifactId>devplatform-commons</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
+  		<version>${devplatform.commons.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework.boot</groupId>
