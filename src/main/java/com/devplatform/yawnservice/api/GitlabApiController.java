@@ -63,7 +63,7 @@ public class GitlabApiController implements GitlabApi {
 
     @Override
     public ResponseEntity<ModelApiResponse> push(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabPush body) {
-    	amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventType().name());
+    	amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventName().name());
 
     	String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json"))) {
