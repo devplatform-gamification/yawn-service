@@ -96,67 +96,46 @@ public class GitlabApiController implements GitlabApi {
 	@Override
 	public ResponseEntity<ModelApiResponse> mergeRequest(
 			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventMergeRequest body) {
-		amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventType().name());
 
-		String accept = request.getHeader("Accept");
-		if (accept != null && (accept.contains("application/json"))) {
-			try {
-				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
-						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-						ModelApiResponse.class), HttpStatus.OK);
-			} catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}else {
-			log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
+		try {
+			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventType().name());
+			return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
+					"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
+					ModelApiResponse.class), HttpStatus.OK);
+		} catch (IOException e) {
+			log.error("Couldn't serialize response for content type application/json", e);
+			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		log.error("[MR] The answer will be not implemented (501)");
-		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public ResponseEntity<ModelApiResponse> push(
 			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventPush body) {
-		amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventName().name());
 
-		String accept = request.getHeader("Accept");
-		if (accept != null && (accept.contains("application/json"))) {
-			try {
-				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
-						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-						ModelApiResponse.class), HttpStatus.OK);
-			} catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}else {
-			log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
+		try {
+			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventName().name());
+			return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
+					"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
+					ModelApiResponse.class), HttpStatus.OK);
+		} catch (IOException e) {
+			log.error("Couldn't serialize response for content type application/json", e);
+			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		log.error("[PUSH] The answer will be not implemented (501)");
-		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public ResponseEntity<ModelApiResponse> comment(
 			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventNote body) {
-		amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventType().name());
 
-		String accept = request.getHeader("Accept");
-		if (accept != null && (accept.contains("application/json"))) {
-			try {
-				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
-						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-						ModelApiResponse.class), HttpStatus.OK);
-			} catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}else {
-			log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
+		try {
+			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventType().name());
+			return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
+					"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
+					ModelApiResponse.class), HttpStatus.OK);
+		} catch (IOException e) {
+			log.error("Couldn't serialize response for content type application/json", e);
+			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		log.error("[COMMENT] The answer will be not implemented (501)");
-		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 	
 	private boolean checkGitlabEventsHeader(HttpHeaders headers) {

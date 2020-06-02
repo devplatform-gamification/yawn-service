@@ -109,91 +109,60 @@ public class JiraApiController implements JiraApi {
 		if(body.getIssueEventTypeName() != null) {
 			eventType = eventType.concat(".").concat(body.getIssueEventTypeName().name());
 		}
-		amqpProducer.sendMessageGeneric(body, routingKeyPrefix, eventType);
 
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
-						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-						ModelApiResponse.class), HttpStatus.OK);
-			} catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}else {
-			log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
+		try {
+			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, eventType);
+			return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
+					"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
+					ModelApiResponse.class), HttpStatus.OK);
+		} catch (IOException e) {
+			log.error("Couldn't serialize response for content type application/json", e);
+			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		log.error("[ISSUE] The answer will be not implemented (501)");
-		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public ResponseEntity<ModelApiResponse> addDeleteIssueLink(
 			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventLink body) {
-		amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getWebhookEvent().name());
 
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
-						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-						ModelApiResponse.class), HttpStatus.OK);
-			} catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}else {
-			log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
+		try {
+			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getWebhookEvent().name());
+			return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
+					"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
+					ModelApiResponse.class), HttpStatus.OK);
+		} catch (IOException e) {
+			log.error("Couldn't serialize response for content type application/json", e);
+			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		log.error("[ISSUE-LINK] The answer will be not implemented (501)");
-		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public ResponseEntity<ModelApiResponse> addUpdateIssueComment( 
 			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventComment body) {
-		amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getWebhookEvent().name());
 
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
-						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-						ModelApiResponse.class), HttpStatus.OK);
-			} catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}else {
-			log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
+		try {
+			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getWebhookEvent().name());
+			return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
+					"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
+					ModelApiResponse.class), HttpStatus.OK);
+		} catch (IOException e) {
+			log.error("Couldn't serialize response for content type application/json", e);
+			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		log.error("[ISSUE-COMMENT] The answer will be not implemented (501)");
-		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@Override
 	public ResponseEntity<ModelApiResponse> projectVersion(
 			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventVersion body) {
-		amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getWebhookEvent().name());
 
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
-						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-						ModelApiResponse.class), HttpStatus.OK);
-			} catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}else {
-			log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
+		try {
+			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getWebhookEvent().name());
+			return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
+					"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
+					ModelApiResponse.class), HttpStatus.OK);
+		} catch (IOException e) {
+			log.error("Couldn't serialize response for content type application/json", e);
+			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		log.error("[VERSION] The answer will be not implemented (501)");
-		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}	
 }

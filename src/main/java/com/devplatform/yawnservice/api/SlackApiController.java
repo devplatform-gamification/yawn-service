@@ -57,21 +57,15 @@ public class SlackApiController implements SlackApi {
 			if (bodyGeneric.getType() == SlackEventTypeEnum.URL_VERIFICATION) {
 				return this.replyToChallenge(bodyBytes);
 			}
-			SlackEventCallback bodyCallback = objectMapper.readValue(bodyBytes, SlackEventCallback.class);
-			amqpProducer.sendMessageGeneric(bodyCallback, routingKeyPrefix, bodyCallback.getType().name());
-
-			String accept = request.getHeader("Accept");
-			if (accept != null && accept.contains("application/json")) {
-				try {
-					return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
-							"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-							ModelApiResponse.class), HttpStatus.OK);
-				} catch (IOException e) {
-					log.error("Couldn't serialize response for content type application/json", e);
-					return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-				}
-			}else {
-				log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
+			try {
+				SlackEventCallback bodyCallback = objectMapper.readValue(bodyBytes, SlackEventCallback.class);
+				amqpProducer.sendMessageGeneric(bodyCallback, routingKeyPrefix, bodyCallback.getType().name());
+				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
+						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
+						ModelApiResponse.class), HttpStatus.OK);
+			} catch (IOException e) {
+				log.error("Couldn't serialize response for content type application/json", e);
+				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 		log.error("[SLACK] The answer will be not implemented (501)");
