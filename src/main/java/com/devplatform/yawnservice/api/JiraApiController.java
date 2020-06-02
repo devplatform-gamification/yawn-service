@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.devplatform.model.ModelApiResponse;
+import com.devplatform.model.jira.event.JiraEvent;
 import com.devplatform.model.jira.event.JiraEventComment;
 import com.devplatform.model.jira.event.JiraEventIssue;
 import com.devplatform.model.jira.event.JiraEventLink;
@@ -47,6 +48,61 @@ public class JiraApiController implements JiraApi {
 		this.request = request;
 	}
 
+	@Override
+	public ResponseEntity<ModelApiResponse> events(
+			@RequestParam(name = "user_id") String userId, @RequestParam(name = "user_key") String userKey,
+			@ApiParam(value = "", required = true) @RequestBody byte[] bodyBytes) {
+		
+		log.info(new String(bodyBytes));
+		JiraEvent bodyGeneric;
+		try {
+			bodyGeneric = objectMapper.readValue(bodyBytes, JiraEvent.class);
+			if (bodyGeneric.getWebhookEvent() != null) {
+				switch (bodyGeneric.getWebhookEvent()) {
+				case ISSUE_CREATED:
+				case ISSUE_UPDATED:
+				case ISSUE_DELETED:
+					JiraEventIssue issueEvent = objectMapper.readValue(bodyBytes, JiraEventIssue.class);
+					issueEvent.setUserKey(userKey);
+					issueEvent.setUserName(userId);
+					return addUpdateIssue(issueEvent);
+				case ISSUE_LINK_CREATED:
+				case ISSUE_LINK_DELETED:
+					JiraEventLink issueLinkEvent = objectMapper.readValue(bodyBytes, JiraEventLink.class);
+					issueLinkEvent.setUserKey(userKey);
+					issueLinkEvent.setUserName(userId);
+					return addDeleteIssueLink(issueLinkEvent);
+				case COMMENT_CREATED:
+				case COMMENT_UPDATED:
+				case COMMENT_DELETED:
+					JiraEventComment commentEvent = objectMapper.readValue(bodyBytes, JiraEventComment.class);
+					commentEvent.setUserKey(userKey);
+					commentEvent.setUserName(userId);
+					return addUpdateIssueComment(commentEvent);
+				case VERSION_CREATED:
+				case VERSION_UPDATED:
+				case VERSION_MOVED:
+				case VERSION_RELEASED:
+				case VERSION_UNRELEASED:
+				case VERSION_DELETED:
+					JiraEventVersion versionEvent = objectMapper.readValue(bodyBytes, JiraEventVersion.class);
+					versionEvent.setUserKey(userKey);
+					versionEvent.setUserName(userId);
+					return projectVersion(versionEvent);
+				default:
+					log.error("Não foi possível identificar o tipo de evento recebido: " + bodyGeneric.getWebhookEvent().name());
+					break;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			log.error("Couldn't desserialize request", e);
+			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
+	}
+	
 	public ResponseEntity<ModelApiResponse> addUpdateIssue(
 			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventIssue body) {
 		String eventType = body.getWebhookEvent().name();
@@ -72,10 +128,7 @@ public class JiraApiController implements JiraApi {
 
 	@Override
 	public ResponseEntity<ModelApiResponse> addDeleteIssueLink(
-			@RequestParam(name = "user_id") String userId, @RequestParam(name = "user_key") String userKey,
 			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventLink body) {
-		body.setUserKey(userKey);
-		body.setUserName(userId);
 		amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getWebhookEvent().name());
 
 		String accept = request.getHeader("Accept");
@@ -115,10 +168,7 @@ public class JiraApiController implements JiraApi {
 
 	@Override
 	public ResponseEntity<ModelApiResponse> projectVersion(
-			@RequestParam(name = "user_id") String userId, @RequestParam(name = "user_key") String userKey,
 			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventVersion body) {
-		body.setUserKey(userKey);
-		body.setUserName(userId);
 		amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getWebhookEvent().name());
 
 		String accept = request.getHeader("Accept");
@@ -134,6 +184,5 @@ public class JiraApiController implements JiraApi {
 		}
 
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
-	}
-	
+	}	
 }

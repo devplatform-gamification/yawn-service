@@ -19,6 +19,8 @@ import com.devplatform.model.slack.event.SlackEventGeneric;
 import com.devplatform.model.slack.event.SlackEventTypeEnum;
 import com.devplatform.model.slack.response.SlackResponseChallenge;
 import com.devplatform.yawnservice.amqp.AmqpProducer;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.ApiParam;
@@ -45,17 +47,17 @@ public class SlackApiController implements SlackApi {
 		this.request = request;
 	}
 
-	public ResponseEntity<?> receiveEvents(
-			@ApiParam(value = "", required = true) @RequestBody Object body) {
+	public ResponseEntity<?> events(@ApiParam(value = "", required = true) @RequestBody byte[] bodyBytes)
+			throws JsonParseException, JsonMappingException, IOException {
 
-		SlackEventGeneric bodyGeneric = (SlackEventGeneric) body;
-		if(bodyGeneric.getType() != null) {
-			if(bodyGeneric.getType() == SlackEventTypeEnum.URL_VERIFICATION) {
-				return this.replyToChallenge(body);
+		log.info(new String(bodyBytes));
+		SlackEventGeneric bodyGeneric = objectMapper.readValue(bodyBytes, SlackEventGeneric.class);
+		if (bodyGeneric.getType() != null) {
+			if (bodyGeneric.getType() == SlackEventTypeEnum.URL_VERIFICATION) {
+				return this.replyToChallenge(bodyBytes);
 			}
-			log.info(body.toString());
-			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, bodyGeneric.getType().name());
-			
+			amqpProducer.sendMessageGeneric(bodyBytes, routingKeyPrefix, bodyGeneric.getType().name());
+
 			String accept = request.getHeader("Accept");
 			if (accept != null && accept.contains("application/json")) {
 				try {
@@ -70,9 +72,11 @@ public class SlackApiController implements SlackApi {
 		}
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
-	
-	private ResponseEntity<SlackResponseChallenge> replyToChallenge(Object body) {
-		SlackEventChallenge eventChallenge = (SlackEventChallenge) body;
-		return new ResponseEntity<SlackResponseChallenge>(new SlackResponseChallenge(eventChallenge.getChallenge()), HttpStatus.OK);
+
+	private ResponseEntity<SlackResponseChallenge> replyToChallenge(byte[] body)
+			throws JsonParseException, JsonMappingException, IOException {
+		SlackEventChallenge eventChallenge = objectMapper.readValue(body, SlackEventChallenge.class);
+		return new ResponseEntity<SlackResponseChallenge>(new SlackResponseChallenge(eventChallenge.getChallenge()),
+				HttpStatus.OK);
 	}
 }

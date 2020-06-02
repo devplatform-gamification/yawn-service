@@ -30,6 +30,17 @@ import io.swagger.annotations.Authorization;
 @Api(value = "jira", description = "the jira API")
 public interface JiraApi {
 
+	@ApiOperation(value = "Receive all events from jira", nickname = "allJiraEvents", notes = "", response = ModelApiResponse.class, authorizations = {
+			@Authorization(value = "yawn_api_key") }, tags = { "jira", })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/jira/events", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	ResponseEntity<ModelApiResponse> events(@RequestParam(name = "user_id") String userId,
+			@RequestParam(name = "user_key") String userKey,
+			@ApiParam(value = "", required = true) @RequestBody byte[] bodyBytes);
+
 	@ApiOperation(value = "New issue or issue updated", nickname = "addUpdateIssue", notes = "", response = ModelApiResponse.class, authorizations = {
 			@Authorization(value = "yawn_api_key") }, tags = { "jira", })
 	@ApiResponses(value = {
@@ -48,7 +59,6 @@ public interface JiraApi {
 	@RequestMapping(value = "/jira/issuelink", produces = { "application/json" }, consumes = {
 			"application/json" }, method = RequestMethod.POST)
 	ResponseEntity<ModelApiResponse> addDeleteIssueLink(
-			@RequestParam(name = "user_id") String userId, @RequestParam(name = "user_key") String userKey,
 			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventLink body);
 
 	@ApiOperation(value = "New comment or comment upaded", nickname = "addUpdateIssueComment", notes = "", response = ModelApiResponse.class, authorizations = {
@@ -69,7 +79,6 @@ public interface JiraApi {
 	@RequestMapping(value = "/jira/version", produces = { "application/json" }, consumes = {
 			"application/json" }, method = RequestMethod.POST)
 	ResponseEntity<ModelApiResponse> projectVersion(
-			@RequestParam(name = "user_id") String userId, @RequestParam(name = "user_key") String userKey,
 			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventVersion body);
 
 }

@@ -7,8 +7,10 @@ package com.devplatform.yawnservice.api;
 
 import javax.validation.Valid;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -28,6 +30,16 @@ import io.swagger.annotations.Authorization;
 @Api(value = "gitlab", description = "the gitlab API")
 public interface GitlabApi {
 
+	@ApiOperation(value = "Receive all events from gitlab", nickname = "allGitlabEvents", notes = "", response = ModelApiResponse.class, authorizations = {
+			@Authorization(value = "yawn_api_key") }, tags = { "jira", })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/gitlab/events", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	ResponseEntity<ModelApiResponse> events(@ApiParam(value = "", required = true) @RequestBody byte[] bodyBytes
+			, @RequestHeader HttpHeaders  headers);
+
 	@ApiOperation(value = "New/Changed merge request", nickname = "mergeRequest", notes = "", response = ModelApiResponse.class, authorizations = {
 			@Authorization(value = "yawn_api_key") }, tags = { "gitlab", })
 	@ApiResponses(value = {
@@ -37,7 +49,6 @@ public interface GitlabApi {
 			"application/json" }, method = RequestMethod.POST)
 	ResponseEntity<ModelApiResponse> mergeRequest(
 			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventMergeRequest body);
-
 
 	@ApiOperation(value = "New branch push", nickname = "push", notes = "", response = ModelApiResponse.class, authorizations = {
 			@Authorization(value = "yawn_api_key") }, tags = { "gitlab", })
@@ -49,7 +60,6 @@ public interface GitlabApi {
 	ResponseEntity<ModelApiResponse> push(
 			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventPush body);
 
-	
 	@ApiOperation(value = "New/changed comment", nickname = "note", notes = "", response = ModelApiResponse.class, authorizations = {
 			@Authorization(value = "yawn_api_key") }, tags = { "gitlab", })
 	@ApiResponses(value = {
