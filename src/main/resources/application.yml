@@ -37,5 +37,5 @@ springfox:
 yawn:
   routingkey-prefix: ${RABBIT_ROUTINGKEY_PREFIX:dev-platform}
   gitlab:
-    authentication-header-name: "X-Gitlab-Token"
+    authentication-header-name: "x-gitlab-token"
     authentication-header-value: ${GITLAB_HEADER_NAME:12345678}

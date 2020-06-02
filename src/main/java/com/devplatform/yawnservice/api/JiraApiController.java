@@ -116,7 +116,7 @@ public class JiraApiController implements JiraApi {
 			try {
 				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
 						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-						ModelApiResponse.class), HttpStatus.ACCEPTED);
+						ModelApiResponse.class), HttpStatus.OK);
 			} catch (IOException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -136,7 +136,7 @@ public class JiraApiController implements JiraApi {
 			try {
 				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
 						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-						ModelApiResponse.class), HttpStatus.ACCEPTED);
+						ModelApiResponse.class), HttpStatus.OK);
 			} catch (IOException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -156,7 +156,7 @@ public class JiraApiController implements JiraApi {
 			try {
 				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
 						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-						ModelApiResponse.class), HttpStatus.ACCEPTED);
+						ModelApiResponse.class), HttpStatus.OK);
 			} catch (IOException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -176,7 +176,7 @@ public class JiraApiController implements JiraApi {
 			try {
 				return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
 						"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
-						ModelApiResponse.class), HttpStatus.ACCEPTED);
+						ModelApiResponse.class), HttpStatus.OK);
 			} catch (IOException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
