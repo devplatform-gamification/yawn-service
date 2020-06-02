@@ -99,7 +99,7 @@ public class JiraApiController implements JiraApi {
 			log.error("Couldn't desserialize request", e);
 			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+		log.error("[JIRA] The answer will be not implemented (501)");
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 	
@@ -122,7 +122,7 @@ public class JiraApiController implements JiraApi {
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
-
+		log.error("[ISSUE] The answer will be not implemented (501)");
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
@@ -143,6 +143,7 @@ public class JiraApiController implements JiraApi {
 			}
 		}
 
+		log.error("[ISSUE-LINK] The answer will be not implemented (501)");
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
@@ -163,6 +164,7 @@ public class JiraApiController implements JiraApi {
 			}
 		}
 
+		log.error("[ISSUE-COMMENT] The answer will be not implemented (501)");
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
@@ -183,6 +185,7 @@ public class JiraApiController implements JiraApi {
 			}
 		}
 
+		log.error("[VERSION] The answer will be not implemented (501)");
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}	
 }

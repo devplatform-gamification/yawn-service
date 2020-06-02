@@ -87,7 +87,7 @@ public class GitlabApiController implements GitlabApi {
 				log.error("Couldn't desserialize request", e);
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-	
+			log.error("[GITLAB] The answer will be not implemented (501)");
 			return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 		}
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.UNAUTHORIZED);
@@ -109,7 +109,7 @@ public class GitlabApiController implements GitlabApi {
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
-
+		log.error("[MR] The answer will be not implemented (501)");
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
@@ -129,7 +129,7 @@ public class GitlabApiController implements GitlabApi {
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
-
+		log.error("[PUSH] The answer will be not implemented (501)");
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
@@ -150,6 +150,7 @@ public class GitlabApiController implements GitlabApi {
 			}
 		}
 
+		log.error("[COMMENT] The answer will be not implemented (501)");
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 	
@@ -163,5 +164,4 @@ public class GitlabApiController implements GitlabApi {
 		}
 		return autorizado;
 	}
-
 }

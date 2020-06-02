@@ -72,6 +72,7 @@ public class SlackApiController implements SlackApi {
 				}
 			}
 		}
+		log.error("[SLACK] The answer will be not implemented (501)");
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
