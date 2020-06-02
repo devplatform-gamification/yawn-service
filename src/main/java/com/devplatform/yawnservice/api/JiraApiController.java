@@ -121,6 +121,8 @@ public class JiraApiController implements JiraApi {
 				log.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
+		}else {
+			log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
 		}
 		log.error("[ISSUE] The answer will be not implemented (501)");
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
@@ -141,6 +143,8 @@ public class JiraApiController implements JiraApi {
 				log.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
+		}else {
+			log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
 		}
 
 		log.error("[ISSUE-LINK] The answer will be not implemented (501)");
@@ -162,6 +166,8 @@ public class JiraApiController implements JiraApi {
 				log.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
+		}else {
+			log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
 		}
 
 		log.error("[ISSUE-COMMENT] The answer will be not implemented (501)");
@@ -183,6 +189,8 @@ public class JiraApiController implements JiraApi {
 				log.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
+		}else {
+			log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
 		}
 
 		log.error("[VERSION] The answer will be not implemented (501)");

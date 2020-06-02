@@ -70,6 +70,8 @@ public class SlackApiController implements SlackApi {
 					log.error("Couldn't serialize response for content type application/json", e);
 					return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 				}
+			}else {
+				log.info("HEADERS ARE: "+ request.getHeaderNames().toString());
 			}
 		}
 		log.error("[SLACK] The answer will be not implemented (501)");
