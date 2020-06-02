@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.devplatform.model.ModelApiResponse;
+import com.devplatform.model.slack.event.SlackEventCallback;
 import com.devplatform.model.slack.event.SlackEventChallenge;
 import com.devplatform.model.slack.event.SlackEventGeneric;
 import com.devplatform.model.slack.event.SlackEventTypeEnum;
@@ -56,7 +57,8 @@ public class SlackApiController implements SlackApi {
 			if (bodyGeneric.getType() == SlackEventTypeEnum.URL_VERIFICATION) {
 				return this.replyToChallenge(bodyBytes);
 			}
-			amqpProducer.sendMessageGeneric(new String(bodyBytes), routingKeyPrefix, bodyGeneric.getType().name());
+			SlackEventCallback bodyCallback = objectMapper.readValue(bodyBytes, SlackEventCallback.class);
+			amqpProducer.sendMessageGeneric(bodyCallback, routingKeyPrefix, bodyCallback.getType().name());
 
 			String accept = request.getHeader("Accept");
 			if (accept != null && accept.contains("application/json")) {
