@@ -15,9 +15,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.devplatform.model.ModelApiResponse;
-import com.devplatform.model.event.gitlab.GitlabMergeRequest;
-import com.devplatform.model.event.gitlab.GitlabNote;
-import com.devplatform.model.event.gitlab.GitlabPush;
+import com.devplatform.model.gitlab.event.GitlabEventMergeRequest;
+import com.devplatform.model.gitlab.event.GitlabEventNote;
+import com.devplatform.model.gitlab.event.GitlabEventPush;
 import com.devplatform.yawnservice.amqp.AmqpProducer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -45,7 +45,7 @@ public class GitlabApiController implements GitlabApi {
     }
 
     @Override
-    public ResponseEntity<ModelApiResponse> mergeRequest(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabMergeRequest body) {
+    public ResponseEntity<ModelApiResponse> mergeRequest(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabEventMergeRequest body) {
     	amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventType().name());
 
     	String accept = request.getHeader("Accept");
@@ -62,7 +62,7 @@ public class GitlabApiController implements GitlabApi {
     }
 
     @Override
-    public ResponseEntity<ModelApiResponse> push(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabPush body) {
+    public ResponseEntity<ModelApiResponse> push(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabEventPush body) {
     	amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventName().name());
 
     	String accept = request.getHeader("Accept");
@@ -79,7 +79,7 @@ public class GitlabApiController implements GitlabApi {
     }
 
     @Override
-    public ResponseEntity<ModelApiResponse> comment(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabNote body) {
+    public ResponseEntity<ModelApiResponse> comment(@ApiParam(value = "" ,required=true )  @Valid @RequestBody GitlabEventNote body) {
     	amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventType().name());
 
     	String accept = request.getHeader("Accept");

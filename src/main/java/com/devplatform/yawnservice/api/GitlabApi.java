@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.devplatform.model.ModelApiResponse;
-import com.devplatform.model.event.gitlab.GitlabMergeRequest;
-import com.devplatform.model.event.gitlab.GitlabNote;
-import com.devplatform.model.event.gitlab.GitlabPush;
+import com.devplatform.model.gitlab.event.GitlabEventMergeRequest;
+import com.devplatform.model.gitlab.event.GitlabEventNote;
+import com.devplatform.model.gitlab.event.GitlabEventPush;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +36,7 @@ public interface GitlabApi {
 	@RequestMapping(value = "/gitlab/merge-request", produces = { "application/json" }, consumes = {
 			"application/json" }, method = RequestMethod.POST)
 	ResponseEntity<ModelApiResponse> mergeRequest(
-			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabMergeRequest body);
+			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventMergeRequest body);
 
 
 	@ApiOperation(value = "New branch push", nickname = "push", notes = "", response = ModelApiResponse.class, authorizations = {
@@ -47,7 +47,7 @@ public interface GitlabApi {
 	@RequestMapping(value = "/gitlab/push", produces = { "application/json" }, consumes = {
 			"application/json" }, method = RequestMethod.POST)
 	ResponseEntity<ModelApiResponse> push(
-			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabPush body);
+			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventPush body);
 
 	
 	@ApiOperation(value = "New/changed comment", nickname = "note", notes = "", response = ModelApiResponse.class, authorizations = {
@@ -58,6 +58,6 @@ public interface GitlabApi {
 	@RequestMapping(value = "/gitlab/comment", produces = { "application/json" }, consumes = {
 			"application/json" }, method = RequestMethod.POST)
 	ResponseEntity<ModelApiResponse> comment(
-			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabNote body);
+			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventNote body);
 
 }

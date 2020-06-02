@@ -5,15 +5,12 @@
  */
 package com.devplatform.yawnservice.api;
 
-import javax.validation.Valid;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.devplatform.model.ModelApiResponse;
-import com.devplatform.model.event.slack.SlackChannelMessage;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,16 +22,16 @@ import io.swagger.annotations.Authorization;
 @Api(value = "slack", description = "the slack API")
 public interface SlackApi {
 
-    @ApiOperation(value = "New message to a slack channel", nickname = "addMessage", notes = "", response = ModelApiResponse.class, authorizations = {
+    @ApiOperation(value = "Receive Slack EventsAPI", nickname = "receiveEvents", notes = "", response = ModelApiResponse.class, authorizations = {
         @Authorization(value = "yawn_api_key")    }, tags={ "slack", })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
         @ApiResponse(code = 405, message = "Invalid input") })
-    @RequestMapping(value = "/slack/channel/message",
+    @RequestMapping(value = "/slack/events",
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<ModelApiResponse> addMessage(@ApiParam(value = "" ,required=true )  @Valid @RequestBody SlackChannelMessage body
+    ResponseEntity<?> receiveEvents(@ApiParam(value = "" ,required=true ) @RequestBody Object body
 );
 
 }

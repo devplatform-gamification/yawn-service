@@ -1,4 +1,6 @@
 package com.devplatform.yawnservice.amqp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +10,8 @@ import com.devplatform.yawnservice.configuration.YawnProperties;
 
 @Component
 public class AmqpProducer {
+
+    private static final Logger log = LoggerFactory.getLogger(AmqpProducer.class);
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -29,7 +33,8 @@ public class AmqpProducer {
     	String routingKey = routingkeyPrefix
     							.concat(".")
     							.concat(eventType);
-        System.out.println("Send Generic msg with routingkey: ["+ routingKey + "] = " + msg.toString());
+    	
+        log.info("Send Generic msg with routingkey: ["+ routingKey + "]\n" + msg.toString());
         rabbitTemplate.convertAndSend(routingKey ,msg);
     }
 }

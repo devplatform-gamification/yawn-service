@@ -11,9 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.devplatform.model.ModelApiResponse;
-import com.devplatform.model.event.jira.JiraEvent;
+import com.devplatform.model.jira.event.JiraEventComment;
+import com.devplatform.model.jira.event.JiraEventIssue;
+import com.devplatform.model.jira.event.JiraEventLink;
+import com.devplatform.model.jira.event.JiraEventVersion;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,20 +25,51 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
+
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-18T19:01:01.992Z[GMT]")
 @Api(value = "jira", description = "the jira API")
 public interface JiraApi {
 
-    @ApiOperation(value = "New issue or issue updated", nickname = "addUpdateIssue", notes = "", response = ModelApiResponse.class, authorizations = {
-        @Authorization(value = "yawn_api_key")    }, tags={ "jira", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
-        @ApiResponse(code = 405, message = "Invalid input") })
-    @RequestMapping(value = "/jira/issue",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
-        method = RequestMethod.POST)
-    ResponseEntity<ModelApiResponse> addUpdateIssue(@ApiParam(value = "" ,required=true )  @Valid @RequestBody JiraEvent body
-);
+	@ApiOperation(value = "New issue or issue updated", nickname = "addUpdateIssue", notes = "", response = ModelApiResponse.class, authorizations = {
+			@Authorization(value = "yawn_api_key") }, tags = { "jira", })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/jira/issue", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	ResponseEntity<ModelApiResponse> addUpdateIssue(
+			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventIssue body);
+
+	@ApiOperation(value = "New issueLink or issueLink deleted", nickname = "addDeleteIssueLink", notes = "", response = ModelApiResponse.class, authorizations = {
+			@Authorization(value = "yawn_api_key") }, tags = { "jira", })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/jira/issuelink", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	ResponseEntity<ModelApiResponse> addDeleteIssueLink(
+			@RequestParam(name = "user_id") String userId, @RequestParam(name = "user_key") String userKey,
+			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventLink body);
+
+	@ApiOperation(value = "New comment or comment upaded", nickname = "addUpdateIssueComment", notes = "", response = ModelApiResponse.class, authorizations = {
+			@Authorization(value = "yawn_api_key") }, tags = { "jira", })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/jira/issueComment", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	ResponseEntity<ModelApiResponse> addUpdateIssueComment(
+			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventComment body);
+
+	@ApiOperation(value = "Version changes", nickname = "projectVersion", notes = "", response = ModelApiResponse.class, authorizations = {
+			@Authorization(value = "yawn_api_key") }, tags = { "jira", })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/jira/version", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	ResponseEntity<ModelApiResponse> projectVersion(
+			@RequestParam(name = "user_id") String userId, @RequestParam(name = "user_key") String userKey,
+			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventVersion body);
 
 }
