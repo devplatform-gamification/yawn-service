@@ -68,8 +68,7 @@ jobs:
       REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
       REGISTRY_PASS: ${{ secrets.REGISTRY_PASS }}
       REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
-#       REGISTRY_HOST: docker.pkg.github.com
-      REGISTRY_PACKAGE_GROUP: zeniel/yawn-service
+      REGISTRY_PACKAGE_GROUP: devplatform-gamification/yawn-service
       REGISTRY_PACKAGE_NAME: yawn-service
     steps:
     - name: Restauring artifacts
