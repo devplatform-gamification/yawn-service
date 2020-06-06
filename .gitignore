@@ -5,6 +5,7 @@ target/
 !**/src/test/**
 
 .attach*
+bin/
 
 ### STS ###
 .apt_generated

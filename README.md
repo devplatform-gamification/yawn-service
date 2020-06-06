@@ -13,11 +13,11 @@ It receives all those webhooks and sends to the rabbitMQ with a specific service
 
 `$ echo [pass] | sudo docker login docker.pkg.github.com -u [user] --password-stdin`
 
-`$ sudo docker pull docker.pkg.github.com/zeniel/yawn-service/yawn-service:latest`
+`$ sudo docker pull docker.pkg.github.com/devplatform-gamification/yawn-service/yawn-service:latest`
 
-`$ sudo docker run docker.pkg.github.com/zeniel/yawn-service/yawn-service:latest -p 8020:8020`
+`$ sudo docker run docker.pkg.github.com/devplatform-gamification/yawn-service/yawn-service:latest -p 8020:8020`
 
-## Envarionment variables
+## Environment variables
 
 - RABBITMQ_HOST 	[rabbit-host] # default: localhost
 - RABBIT_VHOST 	[rabbit-vhost] # default: /
