@@ -18,7 +18,7 @@ import com.devplatform.model.slack.event.SlackEventCallback;
 import com.devplatform.model.slack.event.SlackEventChallenge;
 import com.devplatform.model.slack.event.SlackEventGeneric;
 import com.devplatform.model.slack.event.SlackEventTypeEnum;
-import com.devplatform.model.slack.response.SlackResponseChallenge;
+import com.devplatform.model.slack.response.SlackChallengeResponse;
 import com.devplatform.yawnservice.amqp.AmqpProducer;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -72,10 +72,10 @@ public class SlackApiController implements SlackApi {
 		return new ResponseEntity<ModelApiResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
-	private ResponseEntity<SlackResponseChallenge> replyToChallenge(byte[] body)
+	private ResponseEntity<SlackChallengeResponse> replyToChallenge(byte[] body)
 			throws JsonParseException, JsonMappingException, IOException {
 		SlackEventChallenge eventChallenge = objectMapper.readValue(body, SlackEventChallenge.class);
-		return new ResponseEntity<SlackResponseChallenge>(new SlackResponseChallenge(eventChallenge.getChallenge()),
+		return new ResponseEntity<SlackChallengeResponse>(new SlackChallengeResponse(eventChallenge.getChallenge()),
 				HttpStatus.OK);
 	}
 }
