@@ -41,6 +41,7 @@ public interface JiraApi {
 			@RequestParam(name = "user_key") String userKey,
 			@ApiParam(value = "", required = true) @RequestBody byte[] bodyBytes);
 
+	
 	@ApiOperation(value = "New issue or issue updated", nickname = "addUpdateIssue", notes = "", response = ModelApiResponse.class, authorizations = {
 			@Authorization(value = "yawn_api_key") }, tags = { "jira", })
 	@ApiResponses(value = {
