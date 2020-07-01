@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiParam;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-18T19:01:01.992Z[GMT]")
 @Controller
-public class RocketchatApiController implements SlackApi {
+public class RocketchatApiController implements RocketchatApi {
 
 	private static final Logger log = LoggerFactory.getLogger(RocketchatApiController.class);
 
