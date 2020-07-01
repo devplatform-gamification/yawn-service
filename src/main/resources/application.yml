@@ -28,6 +28,8 @@ spring:
           routing-key-prefix: ${RABBIT_GITLAB_ROUTINGKEY_PREFIX:dev-platform.gitlab}
         slack:
           routing-key-prefix: ${RABBIT_SLACK_ROUTINGKEY_PREFIX:dev-platform.slack}
+        rocketchat:
+          routing-key-prefix: ${RABBIT_ROCKETCHAT_ROUTINGKEY_PREFIX:dev-platform.rocketchat}
         
 springfox:
   documentation:
