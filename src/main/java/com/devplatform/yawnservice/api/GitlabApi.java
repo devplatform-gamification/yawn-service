@@ -18,6 +18,7 @@ import com.devplatform.model.ModelApiResponse;
 import com.devplatform.model.gitlab.event.GitlabEventMergeRequest;
 import com.devplatform.model.gitlab.event.GitlabEventNote;
 import com.devplatform.model.gitlab.event.GitlabEventPush;
+import com.devplatform.model.gitlab.event.GitlabEventPushTag;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -59,6 +60,16 @@ public interface GitlabApi {
 			"application/json" }, method = RequestMethod.POST)
 	ResponseEntity<ModelApiResponse> push(
 			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventPush body);
+
+	@ApiOperation(value = "New push tag", nickname = "tag", notes = "", response = ModelApiResponse.class, authorizations = {
+			@Authorization(value = "yawn_api_key") }, tags = { "gitlab", })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/gitlab/tag", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	ResponseEntity<ModelApiResponse> tag(
+			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventPushTag body);
 
 	@ApiOperation(value = "New/changed comment", nickname = "note", notes = "", response = ModelApiResponse.class, authorizations = {
 			@Authorization(value = "yawn_api_key") }, tags = { "gitlab", })

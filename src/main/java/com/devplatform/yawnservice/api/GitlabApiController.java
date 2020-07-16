@@ -22,6 +22,7 @@ import com.devplatform.model.gitlab.event.GitlabEvent;
 import com.devplatform.model.gitlab.event.GitlabEventMergeRequest;
 import com.devplatform.model.gitlab.event.GitlabEventNote;
 import com.devplatform.model.gitlab.event.GitlabEventPush;
+import com.devplatform.model.gitlab.event.GitlabEventPushTag;
 import com.devplatform.yawnservice.amqp.AmqpProducer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -73,6 +74,9 @@ public class GitlabApiController implements GitlabApi {
 					case PUSH:
 						GitlabEventPush pushEvent = objectMapper.readValue(bodyBytes, GitlabEventPush.class);
 						return push(pushEvent);
+					case TAG_PUSH:
+						GitlabEventPushTag tagEvent = objectMapper.readValue(bodyBytes, GitlabEventPushTag.class);
+						return tag(tagEvent);
 					case COMMENT:
 						GitlabEventNote noteEvent = objectMapper.readValue(bodyBytes, GitlabEventNote.class);
 						return comment(noteEvent);
@@ -112,6 +116,20 @@ public class GitlabApiController implements GitlabApi {
 	public ResponseEntity<ModelApiResponse> push(
 			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventPush body) {
 
+		try {
+			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventName().name());
+			return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
+					"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
+					ModelApiResponse.class), HttpStatus.OK);
+		} catch (IOException e) {
+			log.error("Couldn't serialize response for content type application/json", e);
+			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@Override
+	public ResponseEntity<ModelApiResponse> tag(
+			@ApiParam(value = "", required = true) @Valid GitlabEventPushTag body) {
 		try {
 			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getEventName().name());
 			return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
