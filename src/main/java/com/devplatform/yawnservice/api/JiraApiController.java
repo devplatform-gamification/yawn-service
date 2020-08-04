@@ -115,7 +115,7 @@ public class JiraApiController implements JiraApi {
 		}
 		String issueRountingKeySuffix = getIssueRoutingKeySuffix(body.getIssue());
 		if(StringUtils.isNotBlank(issueRountingKeySuffix)) {
-			eventType = eventType.concat(issueRountingKeySuffix);
+			eventType = eventType.concat(".").concat(issueRountingKeySuffix);
 		}
 
 		try {
