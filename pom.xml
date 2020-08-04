@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.devplatform</groupId>
 	<artifactId>yawn-service</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.1.0-SNAPSHOT</version>
 	<name>yawn-service</name>
 	<description>This service will collect data from sources like: gitlab, jira, slack and others like custom crawlers and send all information as a RAW message to the message queue</description>
 
@@ -19,6 +19,7 @@
 		<java.version>1.8</java.version>
         <springfox-version>2.9.2</springfox-version>
         <devplatform-commons.version>0.1.9-SNAPSHOT</devplatform-commons.version>
+		<jira.version>8.5.3</jira.version>
 	</properties>
 
 	<dependencies>
@@ -66,17 +67,26 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox-version}</version>
         </dependency>
+<!-- 
+		<dependency>
+		    <groupId>com.atlassian.jira</groupId>
+		    <artifactId>jira-api</artifactId>
+		    <version>${jira.version}</version>
+		    <scope>provided</scope>
+		</dependency>
+ -->
+
 		<!-- common dev-platform elements -->
-	<dependency>
-  		<groupId>com.dev-platform</groupId>
-  		<artifactId>devplatform-commons</artifactId>
-  		<version>${devplatform-commons.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-configuration-processor</artifactId>
-		<optional>true</optional>
-	</dependency>
+		<dependency>
+	  		<groupId>com.dev-platform</groupId>
+	  		<artifactId>devplatform-commons</artifactId>
+	  		<version>${devplatform-commons.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 	
 	<dependencyManagement>

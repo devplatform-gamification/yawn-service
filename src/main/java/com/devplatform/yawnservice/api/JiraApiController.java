@@ -1,10 +1,13 @@
 package com.devplatform.yawnservice.api;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.devplatform.model.ModelApiResponse;
+import com.devplatform.model.jira.JiraIssue;
 import com.devplatform.model.jira.event.JiraEvent;
 import com.devplatform.model.jira.event.JiraEventComment;
 import com.devplatform.model.jira.event.JiraEventIssue;
@@ -109,6 +113,10 @@ public class JiraApiController implements JiraApi {
 		if(body.getIssueEventTypeName() != null) {
 			eventType = eventType.concat(".").concat(body.getIssueEventTypeName().name());
 		}
+		String issueRountingKeySuffix = getIssueRoutingKeySuffix(body.getIssue());
+		if(StringUtils.isNotBlank(issueRountingKeySuffix)) {
+			eventType = eventType.concat(issueRountingKeySuffix);
+		}
 
 		try {
 			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, eventType);
@@ -120,11 +128,37 @@ public class JiraApiController implements JiraApi {
 			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	/**
+	 * Get issue identification: ISSUETYPEID.STATUSID.PROJECTKEY.ISSUEKEY
+	 * @param issue
+	 * @return
+	 */
+	private String getIssueRoutingKeySuffix(JiraIssue issue) {
+		List<String> issueIdentification = new ArrayList<>();
+		if(issue != null) {
+			if(issue.getFields() != null) {
+				if(issue.getFields().getIssuetype() != null ) {
+					issueIdentification.add(issue.getFields().getIssuetype().getId().toString());
+				}
+				if(issue.getFields().getStatus() != null ) {
+					issueIdentification.add(issue.getFields().getStatus().getId().toString());
+				}
+				if(issue.getFields().getProject() != null ) {
+					issueIdentification.add(issue.getFields().getProject().getKey());
+				}
+			}
+			if(issue.getKey() != null ) {
+				issueIdentification.add(issue.getKey());
+			}
+		}
+		
+		return String.join(".", issueIdentification);
+	}
 
 	@Override
 	public ResponseEntity<ModelApiResponse> addDeleteIssueLink(
 			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventLink body) {
-
 		try {
 			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getWebhookEvent().name());
 			return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
