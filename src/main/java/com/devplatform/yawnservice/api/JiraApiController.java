@@ -135,6 +135,7 @@ public class JiraApiController implements JiraApi {
 	 * @return
 	 */
 	private String getIssueRoutingKeySuffix(JiraIssue issue) {
+		String routingKeySuffix = null;
 		List<String> issueIdentification = new ArrayList<>();
 		if(issue != null) {
 			if(issue.getFields() != null) {
@@ -152,8 +153,11 @@ public class JiraApiController implements JiraApi {
 				issueIdentification.add(issue.getKey());
 			}
 		}
+		if(issueIdentification != null && !issueIdentification.isEmpty()) {
+			routingKeySuffix = String.join(".", issueIdentification);
+		}
 		
-		return String.join(".", issueIdentification);
+		return routingKeySuffix;
 	}
 
 	@Override
