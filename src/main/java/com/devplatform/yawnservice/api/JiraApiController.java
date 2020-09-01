@@ -109,7 +109,12 @@ public class JiraApiController implements JiraApi {
 	
 	public ResponseEntity<ModelApiResponse> addUpdateIssue(
 			@ApiParam(value = "", required = true) @Valid @RequestBody JiraEventIssue body) {
-		String eventType = body.getWebhookEvent().name();
+		String eventType = "";
+		if(body.getWebhookEvent() != null && StringUtils.isNotBlank(body.getWebhookEvent().name())) {
+			eventType = body.getWebhookEvent().name();
+		}else {
+			log.error("Couldn't get the eventy type for message: " + body.toString());
+		}
 		if(body.getIssueEventTypeName() != null) {
 			eventType = eventType.concat(".").concat(body.getIssueEventTypeName().name());
 		}
