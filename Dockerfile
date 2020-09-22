@@ -17,4 +17,4 @@ ENV JAVA_OPTS=""
 ARG JAR_FILE=target/yawn-service*.jar
 ADD ${JAR_FILE} yawn.jar
 
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/yawn.jar", "--logging.file=/tmp/yawn.log"]
+ENTRYPOINT ["java","-jar","/yawn.jar", "--logging.file=/tmp/yawn.log"]
