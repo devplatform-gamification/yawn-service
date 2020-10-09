@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.devplatform.model.ModelApiResponse;
 import com.devplatform.model.gitlab.event.GitlabEventMergeRequest;
 import com.devplatform.model.gitlab.event.GitlabEventNote;
+import com.devplatform.model.gitlab.event.GitlabEventPipeline;
 import com.devplatform.model.gitlab.event.GitlabEventPush;
 import com.devplatform.model.gitlab.event.GitlabEventPushTag;
 
@@ -81,4 +82,13 @@ public interface GitlabApi {
 	ResponseEntity<ModelApiResponse> comment(
 			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventNote body);
 
+	@ApiOperation(value = "New/changed pipeline", nickname = "pipeline", notes = "", response = ModelApiResponse.class, authorizations = {
+			@Authorization(value = "yawn_api_key") }, tags = { "gitlab", })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "successful operation", response = ModelApiResponse.class),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/gitlab/pipeline", produces = { "application/json" }, consumes = {
+			"application/json" }, method = RequestMethod.POST)
+	ResponseEntity<ModelApiResponse> pipeline(
+			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventPipeline body);
 }

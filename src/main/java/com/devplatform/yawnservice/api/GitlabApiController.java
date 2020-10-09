@@ -21,6 +21,7 @@ import com.devplatform.model.ModelApiResponse;
 import com.devplatform.model.gitlab.event.GitlabEvent;
 import com.devplatform.model.gitlab.event.GitlabEventMergeRequest;
 import com.devplatform.model.gitlab.event.GitlabEventNote;
+import com.devplatform.model.gitlab.event.GitlabEventPipeline;
 import com.devplatform.model.gitlab.event.GitlabEventPush;
 import com.devplatform.model.gitlab.event.GitlabEventPushTag;
 import com.devplatform.yawnservice.amqp.AmqpProducer;
@@ -80,6 +81,9 @@ public class GitlabApiController implements GitlabApi {
 					case COMMENT:
 						GitlabEventNote noteEvent = objectMapper.readValue(bodyBytes, GitlabEventNote.class);
 						return comment(noteEvent);
+					case PIPELINE_CHANGES:
+						GitlabEventPipeline pipelineEvent = objectMapper.readValue(bodyBytes, GitlabEventPipeline.class);
+						return pipeline(pipelineEvent);
 					default:
 						log.error("Não foi possível identificar o tipo de evento recebido: "
 								+ bodyGeneric.getObjectKind().name());
@@ -155,7 +159,22 @@ public class GitlabApiController implements GitlabApi {
 			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
+	@Override
+	public ResponseEntity<ModelApiResponse> pipeline(
+			@ApiParam(value = "", required = true) @Valid @RequestBody GitlabEventPipeline body) {
+
+		try {
+			amqpProducer.sendMessageGeneric(body, routingKeyPrefix, body.getObjectKind().name());
+			return new ResponseEntity<ModelApiResponse>(objectMapper.readValue(
+					"{\n  \"code\" : 0,\n  \"type\" : \"type\",\n  \"message\" : \"message\"\n}",
+					ModelApiResponse.class), HttpStatus.OK);
+		} catch (IOException e) {
+			log.error("Couldn't serialize response for content type application/json", e);
+			return new ResponseEntity<ModelApiResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	private boolean checkGitlabEventsHeader(HttpHeaders headers) {
 		boolean autorizado = false;
 		List<String> tokenList = headers.get(REQUEST_HEADER_NAME);
